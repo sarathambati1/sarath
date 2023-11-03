@@ -1,0 +1,103 @@
+// A. SARATH
+// AP22110010215
+// CSE-D
+
+
+//two very large numbers using linked list.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+typedef struct Node Node;
+
+void insert(Node** head, int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+Node* addLists(Node* list1, Node* list2) {
+    Node* result = NULL; 
+    Node* prev = NULL;
+    Node* temp;
+    int carry = 0, sum;
+
+    while (list1 != NULL || list2 != NULL) {
+        sum = carry + (list1 ? list1->data : 0) + (list2 ? list2->data : 0);
+
+        carry = sum / 10; 
+        sum %= 10; 
+
+        temp = (Node*)malloc(sizeof(Node));
+        temp->data = sum;
+        temp->next = NULL;
+
+        if (result == NULL)
+            result = temp;
+        else
+            prev->next = temp;
+
+        prev = temp;
+
+        if (list1)
+            list1 = list1->next;
+        if (list2)
+            list2 = list2->next;
+    }
+
+    if (carry > 0) {
+        temp = (Node*)malloc(sizeof(Node));
+        temp->data = carry;
+        temp->next = NULL;
+        prev->next = temp;
+    }
+
+    return result;
+}
+
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* num1 = NULL;
+    Node* num2 = NULL;
+
+   
+    insert(&num1, 2);
+    insert(&num1, 2);
+    insert(&num1, 3);
+    insert(&num1, 4);
+    insert(&num1, 5);
+
+    insert(&num2, 6);
+    insert(&num2, 7);
+    insert(&num2, 8);
+    insert(&num2, 9);
+
+    printf("Number 1: ");
+    printList(num1);
+    printf("Number 2: ");
+    printList(num2);q
+
+    Node* sumList = addLists(num1, num2);
+
+    printf("Sum: ");
+    printList(sumList);
+
+    return 0;
+}
+
+
