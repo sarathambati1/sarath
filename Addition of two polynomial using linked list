@@ -1,0 +1,117 @@
+// A. SARATH
+// AP22110010215
+// CSE-D
+
+// Addition of two polynomial using linked list
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int coefficient;
+    int exponent;
+    struct Node* next;
+};
+
+struct Node* create_node(int coef, int expo) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->coefficient = coef;
+    newNode->exponent = expo;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insert_term(struct Node** head, int coef, int expo) {
+    struct Node* newNode = create_node(coef, expo);
+
+    if (*head == NULL || expo > (*head)->exponent) {
+        newNode->next = *head;
+        *head = newNode;
+    } else {
+        struct Node* current = *head;
+        while (current->next != NULL && current->next->exponent >= expo) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+}
+
+void add_polynomials(struct Node* poly1, struct Node* poly2, struct Node** result) {
+    while (poly1 != NULL && poly2 != NULL) {
+        if (poly1->exponent == poly2->exponent) {
+            insert_term(result, poly1->coefficient + poly2->coefficient, poly1->exponent);
+            poly1 = poly1->next;
+            poly2 = poly2->next;
+        } else if (poly1->exponent > poly2->exponent) {
+            insert_term(result, poly1->coefficient, poly1->exponent);
+            poly1 = poly1->next;
+        } else {
+            insert_term(result, poly2->coefficient, poly2->exponent);
+            poly2 = poly2->next;
+        }
+    }
+
+    while (poly1 != NULL) {
+        insert_term(result, poly1->coefficient, poly1->exponent);
+        poly1 = poly1->next;
+    }
+
+    while (poly2 != NULL) {
+        insert_term(result, poly2->coefficient, poly2->exponent);
+        poly2 = poly2->next;
+    }
+}
+
+void display_polynomial(struct Node* poly) {
+    if (poly == NULL) {
+        printf("0");
+    }
+    while (poly != NULL) {
+        printf("(%dx^%d)", poly->coefficient, poly->exponent);
+        poly = poly->next;
+        if (poly != NULL) {
+            printf(" + ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* poly1 = NULL;
+    struct Node* poly2 = NULL;
+    struct Node* result = NULL;
+
+    int num_terms1, num_terms2;
+
+    printf("Enter the number of terms in polynomial 1: ");
+    scanf("%d", &num_terms1);
+    printf("Enter the terms of polynomial 1 (coefficient exponent):\n");
+    for (int i = 0; i < num_terms1; i++) {
+        int coef, expo;
+        scanf("%d %d", &coef, &expo);
+        insert_term(&poly1, coef, expo);
+    }
+
+    printf("Enter the number of terms in polynomial 2: ");
+    scanf("%d", &num_terms2);
+    printf("Enter the terms of polynomial 2 (coefficient exponent):\n");
+    for (int i = 0; i < num_terms2; i++) {
+        int coef, expo;
+        scanf("%d %d", &coef, &expo);
+        insert_term(&poly2, coef, expo);
+    }
+
+    printf("Polynomial 1: ");
+    display_polynomial(poly1);
+
+    printf("Polynomial 2: ");
+    display_polynomial(poly2);
+
+    add_polynomials(poly1, poly2, &result);
+
+    printf("Resultant Polynomial: ");
+    display_polynomial(result);
+
+    return 0;
+}
